@@ -1,0 +1,26 @@
+services:
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+    restart: always
+
+  mysql:
+    image: mysql:8.0
+    container_name: database-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Manager159#
+      MYSQL_DATABASE: medicina_db
+      MYSQL_USER: medicina_user
+      MYSQL_PASSWORD: Manager159#
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:

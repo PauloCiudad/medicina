@@ -1,38 +1,124 @@
-# Dependencias
-node_modules/
-/client/node_modules/
-/server/node_modules/
+########################################
+# GENERAL
+########################################
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
 
-# Builds y compilación
+########################################
+# ENV VARIABLES / SECRETOS
+########################################
+.env
+.env.*
+!.env.example
+
+########################################
+# NODE.JS BACKEND
+########################################
+node_modules/
 dist/
 build/
-.next/
-/client/build/
-/server/dist/
-
-# Variables de entorno y secretos (CRÍTICO)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-*.pem
-
-# Logs
+coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+package-lock.json
+yarn.lock
 
-# IDEs y Editores
+########################################
+# POSTGRES / DB LOCAL
+########################################
+*.sql.backup
+*.dump
+*.db
+*.sqlite
+
+########################################
+# ANDROID / KOTLIN
+########################################
+android-app/.gradle/
+android-app/local.properties
+android-app/.idea/
+android-app/*.iml
+android-app/build/
+android-app/app/build/
+android-app/captures/
+android-app/.externalNativeBuild/
+
+########################################
+# GRADLE GLOBAL
+########################################
+.gradle/
+build/
+
+########################################
+# IOS / SWIFT / XCODE
+########################################
+ios-app/DerivedData/
+ios-app/build/
+ios-app/*.pbxuser
+ios-app/*.mode1v3
+ios-app/*.mode2v3
+ios-app/*.perspectivev3
+ios-app/xcuserdata/
+ios-app/*.xcuserstate
+
+########################################
+# COCOAPODS
+########################################
+ios-app/Pods/
+ios-app/Podfile.lock
+
+########################################
+# SWIFT PACKAGE MANAGER
+########################################
+ios-app/.build/
+
+########################################
+# FASTLANE
+########################################
+ios-app/fastlane/report.xml
+ios-app/fastlane/Preview.html
+ios-app/fastlane/screenshots
+ios-app/fastlane/test_output
+
+########################################
+# VS CODE
+########################################
 .vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
 
-# Sistema Operativo
-.DS_Store
-Thumbs.db
+########################################
+# IDEAS / OTROS IDE
+########################################
+.idea/
+
+########################################
+# ARCHIVOS BINARIOS
+########################################
+*.apk
+*.aab
+*.ipa
+*.exe
+*.dll
+*.so
+*.dylib
+
+########################################
+# CACHE
+########################################
+.cache/
+tmp/
+temp/
+
+########################################
+# TEST COVERAGE
+########################################
+coverage/
+
+########################################
+# DOCKER (SI LUEGO USAS)
+########################################
+docker-data/
