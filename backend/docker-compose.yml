@@ -1,26 +1,46 @@
 services:
   backend:
     build: .
-    container_name: backend
+    container_name: serums_backend
+    restart: always
     ports:
       - "3000:3000"
     env_file:
       - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
     depends_on:
-      - mysql
-    restart: always
+      mysql:
+        condition: service_healthy
+    networks:
+      - serums_network
 
   mysql:
     image: mysql:8.0
-    container_name: database-mysql
+    container_name: serums_mysql
     restart: always
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
-      MYSQL_ROOT_PASSWORD: Manager159#
-      MYSQL_DATABASE: medicina_db
-      MYSQL_USER: medicina_user
-      MYSQL_PASSWORD: Manager159#
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: serums_db
+      MYSQL_USER: serums_user
+      MYSQL_PASSWORD: serums_pass
+    ports:
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./database/serums_schema_comentado.sql:/docker-entrypoint-initdb.d/serums_schema_comentado.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "serums_user", "-pserums_pass"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - serums_network
 
 volumes:
   mysql_data:
+
+networks:
+  serums_network:
