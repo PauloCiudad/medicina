@@ -20,7 +20,7 @@ services:
     image: mysql:8.0
     container_name: serums_mysql
     restart: always
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --skip-character-set-client-handshake
     environment:
       MYSQL_ROOT_PASSWORD: root123
       MYSQL_DATABASE: serums_db
