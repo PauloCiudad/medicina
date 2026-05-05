@@ -1,16 +1,134 @@
-# React + Vite
+# Frontend - Sistema Médico SERUMS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend de escritorio desarrollado con React, Vite y Electron.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tecnologías
 
-## React Compiler
+- React
+- Vite
+- Electron
+- Axios
+- Zustand
+- React Router DOM
+- CSS personalizado
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Arquitectura
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```txt
+frontend/
+│
+├── electron/
+│   ├── main.cjs
+│   └── preload.cjs
+│
+├── src/
+│   ├── api/
+│   ├── router/
+│   ├── layouts/
+│   ├── store/
+│   ├── modules/
+│   └── styles/
+│
+└── package.json
+```
+
+---
+
+## Electron
+
+El proyecto usa Electron para convertir el frontend React en una aplicación de escritorio.
+
+```txt
+electron/main.cjs     → Ventana principal
+electron/preload.cjs  → Puente seguro
+src/                  → React renderer
+```
+
+---
+
+## Router
+
+Se usa `HashRouter` para evitar pantalla en blanco al empaquetar Electron.
+
+Rutas principales:
+
+```txt
+/dashboard
+/pacientes
+/pacientes/listado
+/consultas
+/recetas
+/medicamentos
+/inventario
+```
+
+---
+
+## Axios
+
+El cliente Axios se encuentra en:
+
+```txt
+src/api/apiClient.js
+```
+
+Se encarga de:
+
+- Definir la URL base del backend.
+- Adjuntar token JWT automáticamente.
+- Cerrar sesión si recibe error 401.
+
+---
+
+## Estado global
+
+Se usa Zustand para manejar sesión:
+
+```txt
+src/store/authStore.js
+```
+
+Guarda:
+
+- token
+- usuario
+- estado de autenticación
+
+---
+
+## Ejecutar frontend
+
+```bash
+npm install
+npm run dev
+```
+
+Esto levanta:
+
+```txt
+Vite + React
+Electron desktop app
+```
+
+---
+
+## Requisitos
+
+Antes de iniciar sesión, el backend debe estar activo en:
+
+```txt
+http://localhost:3000/api
+```
+
+---
+
+## Login
+
+```txt
+Usuario: admin
+Contraseña: admin123
+```
