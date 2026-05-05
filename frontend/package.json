@@ -5,25 +5,36 @@
   "main": "electron/main.cjs",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev:react\" \"wait-on http://localhost:5173 && electron .\"",
+    "dev": "npm run copy:backend && npm run rebuild:sqlite && concurrently \"npm run dev:react\" \"wait-on http://localhost:5173 && electron .\"",
     "dev:react": "vite",
-    "build": "vite",
+    "build:react": "vite build",
+    "copy:backend": "node scripts/copy-backend.cjs",
+    "rebuild:sqlite": "electron-rebuild -f -w better-sqlite3",
+    "pack:win": "npm run copy:backend && npm run build:react && cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --win --x64 -c electron-builder.json",
+    "dist": "npm run pack:win",
     "preview": "vite preview",
     "electron": "electron ."
   },
   "dependencies": {
     "axios": "^1.7.0",
+    "better-sqlite3": "^12.9.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.0.0",
     "react-router-dom": "^7.0.0",
-    "zustand": "^5.0.0",
-    "zod": "^3.0.0"
+    "zod": "^3.0.0",
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.4",
     "@vitejs/plugin-react": "^4.0.0",
     "concurrently": "^9.0.0",
+    "cross-env": "^10.1.0",
     "electron": "^35.0.0",
+    "electron-builder": "^26.8.1",
     "vite": "^6.0.0",
     "wait-on": "^8.0.0"
   }

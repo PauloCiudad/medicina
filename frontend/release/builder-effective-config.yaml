@@ -1,0 +1,27 @@
+directories:
+  output: release
+  buildResources: build
+appId: pe.serums.desktop
+productName: Sistema Médico SERUMS
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+      - backend/**/*
+      - package.json
+      - node_modules/**/*
+asar: true
+asarUnpack:
+  - node_modules/better-sqlite3/**/*
+win:
+  target:
+    - nsis
+  artifactName: SERUMS-Setup-${version}.${ext}
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Sistema Médico SERUMS
+electronVersion: 35.7.5
