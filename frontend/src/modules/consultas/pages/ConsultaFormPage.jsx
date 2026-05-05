@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { getPacienteByIdRequest } from "../../pacientes/services/pacientesService";
+import { searchCie10Request } from "../../cie10/services/cie10Service";
 
 import {
   createConsultaRequest,
@@ -11,6 +12,7 @@ import {
 
 const initialForm = {
   motivo_consulta: "",
+  diagnostico: "",
   medicacion: "0",
   peso: "",
   talla: "",
@@ -31,8 +33,13 @@ export default function ConsultaFormPage() {
   const [form, setForm] = useState(initialForm);
   const [mostrarSignos, setMostrarSignos] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [buscandoCie10, setBuscandoCie10] = useState(false);
   const [mensajeError, setMensajeError] = useState("");
   const [mensajeOk, setMensajeOk] = useState("");
+
+  const [cie10Query, setCie10Query] = useState("");
+  const [cie10Resultados, setCie10Resultados] = useState([]);
+  const [diagnosticoSeleccionado, setDiagnosticoSeleccionado] = useState(null);
 
   const cargarData = async () => {
     try {
@@ -61,7 +68,23 @@ export default function ConsultaFormPage() {
             consulta.signos_vitales?.frecuencia_respiratoria || "",
           saturacion_oxigeno:
             consulta.signos_vitales?.saturacion_oxigeno || "",
+          diagnostico: consulta.diagnostico || "",
         });
+
+        if (consulta.diagnostico) {
+          const diagnosticoActual = {
+            id: consulta.diagnostico,
+            codigo: consulta.diagnostico_codigo,
+            descripcion: consulta.diagnostico_descripcion,
+          };
+
+          setDiagnosticoSeleccionado(diagnosticoActual);
+          setCie10Query(
+            `${diagnosticoActual.codigo || ""} - ${
+              diagnosticoActual.descripcion || ""
+            }`
+          );
+        }
       } else {
         const pacienteData = await getPacienteByIdRequest(idPaciente);
         setPaciente(pacienteData);
@@ -95,6 +118,58 @@ export default function ConsultaFormPage() {
     });
   };
 
+  const buscarCie10 = async () => {
+    try {
+      setMensajeError("");
+
+      if (!cie10Query.trim()) {
+        setCie10Resultados([]);
+        return;
+      }
+
+      setBuscandoCie10(true);
+
+      const resultados = await searchCie10Request(cie10Query.trim(), 20);
+
+      setCie10Resultados(resultados || []);
+    } catch (error) {
+      setMensajeError(
+        error.response?.data?.message || "Error al buscar diagnóstico CIE10"
+      );
+    } finally {
+      setBuscandoCie10(false);
+    }
+  };
+
+  const handleCie10KeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      buscarCie10();
+    }
+  };
+
+  const seleccionarDiagnostico = (item) => {
+    setForm({
+      ...form,
+      diagnostico: item.id,
+    });
+
+    setDiagnosticoSeleccionado(item);
+    setCie10Query(`${item.codigo} - ${item.descripcion}`);
+    setCie10Resultados([]);
+  };
+
+  const limpiarDiagnostico = () => {
+    setForm({
+      ...form,
+      diagnostico: "",
+    });
+
+    setDiagnosticoSeleccionado(null);
+    setCie10Query("");
+    setCie10Resultados([]);
+  };
+
   const validarFormulario = () => {
     if (!form.motivo_consulta.trim()) {
       return "El motivo de consulta es obligatorio";
@@ -121,7 +196,7 @@ export default function ConsultaFormPage() {
     return {
       id_paciente: Number(idPacienteFinal),
       motivo_consulta: form.motivo_consulta.trim(),
-      diagnostico: null,
+      diagnostico: form.diagnostico ? Number(form.diagnostico) : null,
       medicacion: Number(form.medicacion),
       signos_vitales: {
         peso: form.peso ? Number(form.peso) : null,
@@ -166,6 +241,7 @@ export default function ConsultaFormPage() {
         await createConsultaRequest(payload);
         setMensajeOk("Consulta registrada correctamente");
         setForm(initialForm);
+        limpiarDiagnostico();
       }
     } catch (error) {
       setMensajeError(
@@ -261,6 +337,69 @@ export default function ConsultaFormPage() {
               </button>
             </div>
           </div>
+        </div>
+
+        <div className="cie10-box">
+          <div className="consulta-section-header">
+            <div>
+              <h2>Diagnóstico CIE10</h2>
+              <p>Busca por código o descripción del diagnóstico.</p>
+            </div>
+          </div>
+
+          <div className="cie10-search-row">
+            <input
+              value={cie10Query}
+              onChange={(e) => setCie10Query(e.target.value)}
+              onKeyDown={handleCie10KeyDown}
+              placeholder="Ej. gripe, fiebre, diabetes, J00..."
+            />
+
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={buscarCie10}
+              disabled={buscandoCie10}
+            >
+              {buscandoCie10 ? "Buscando..." : "Buscar"}
+            </button>
+
+            {diagnosticoSeleccionado && (
+              <button
+                type="button"
+                className="btn-light"
+                onClick={limpiarDiagnostico}
+              >
+                Limpiar
+              </button>
+            )}
+          </div>
+
+          {diagnosticoSeleccionado && (
+            <div className="cie10-selected">
+              <span>Diagnóstico seleccionado</span>
+              <strong>
+                {diagnosticoSeleccionado.codigo} -{" "}
+                {diagnosticoSeleccionado.descripcion}
+              </strong>
+            </div>
+          )}
+
+          {cie10Resultados.length > 0 && (
+            <div className="cie10-results">
+              {cie10Resultados.map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
+                  className="cie10-result-item"
+                  onClick={() => seleccionarDiagnostico(item)}
+                >
+                  <strong>{item.codigo}</strong>
+                  <span>{item.descripcion}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="consulta-main-box">

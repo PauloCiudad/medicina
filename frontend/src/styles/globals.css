@@ -1943,3 +1943,91 @@ th {
 .btn-light:hover {
   background: #d1d5db;
 }
+
+.cie10-box {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.cie10-search-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 10px;
+}
+
+.cie10-search-row input {
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px;
+  outline: none;
+  font-size: 14px;
+}
+
+.cie10-search-row input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.cie10-selected {
+  margin-top: 14px;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cie10-selected span {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.cie10-results {
+  margin-top: 14px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cie10-result-item {
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px;
+  cursor: pointer;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
+}
+
+.cie10-result-item:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.cie10-result-item strong {
+  color: #1d4ed8;
+}
+
+.cie10-result-item span {
+  color: #374151;
+}
+
+@media (max-width: 700px) {
+  .cie10-search-row {
+    grid-template-columns: 1fr;
+  }
+
+  .cie10-result-item {
+    grid-template-columns: 1fr;
+  }
+}
