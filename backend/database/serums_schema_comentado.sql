@@ -42,58 +42,6 @@ CREATE DATABASE IF NOT EXISTS serums_db
 USE serums_db;
 /*
 ================================================================================
- 1. TABLA: rol
- --------------------------------------------------------------------------------
- Define los roles de los usuarios del sistema.
- Ejemplos:
-   - ADMIN: administrador del sistema
-   - DOCTOR: médico que registra pacientes, consultas y recetas
-================================================================================
-*/
-CREATE TABLE IF NOT EXISTS rol (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del rol',
-    nombre VARCHAR(50) NOT NULL COMMENT 'Nombre del rol: ADMIN, DOCTOR, etc.',
-    descripcion VARCHAR(255) NULL COMMENT 'Descripción funcional del rol',
-    activo TINYINT DEFAULT 1 COMMENT '1 = activo, 0 = inactivo',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del registro',
-
-    UNIQUE KEY uk_rol_nombre (nombre)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Catálogo de roles para controlar permisos del sistema';
-
-/*
-================================================================================
- 2. TABLA: usuario
- --------------------------------------------------------------------------------
- Usuarios que podrán ingresar al sistema.
- Se usará para login con JWT desde el backend Node.js.
- La contraseña NO se guarda en texto plano; se guarda como hash.
-================================================================================
-*/
-CREATE TABLE IF NOT EXISTS usuario (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del usuario',
-    id_rol BIGINT NOT NULL COMMENT 'Rol asignado al usuario',
-    nombres VARCHAR(150) NOT NULL COMMENT 'Nombres del usuario',
-    apellidos VARCHAR(150) NULL COMMENT 'Apellidos del usuario',
-    usuario VARCHAR(100) NOT NULL COMMENT 'Nombre de usuario para login',
-    password_hash VARCHAR(255) NOT NULL COMMENT 'Contraseña encriptada con bcrypt',
-    email VARCHAR(150) NULL COMMENT 'Correo electrónico del usuario',
-    activo TINYINT DEFAULT 1 COMMENT '1 = activo, 0 = inactivo',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha de creación del usuario',
-    updated_at TIMESTAMP NULL DEFAULT NULL COMMENT 'Fecha de última actualización del usuario',
-
-    UNIQUE KEY uk_usuario_usuario (usuario),
-    KEY idx_usuario_rol (id_rol),
-
-    CONSTRAINT fk_usuario_rol
-        FOREIGN KEY (id_rol) REFERENCES rol(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Usuarios del sistema SERUMS';
-
-/*
-================================================================================
  3. TABLA BASE: PACIENTE
  --------------------------------------------------------------------------------
  Tabla principal de pacientes.
@@ -415,81 +363,33 @@ COMMENT='Recetas médicas y medicamentos indicados por consulta';
 ================================================================================
 */
 CREATE TABLE IF NOT EXISTS inventario_movimiento (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del movimiento de inventario',
-    id_medicamento BIGINT NOT NULL COMMENT 'Medicamento afectado por el movimiento',
-    id_usuario BIGINT NULL COMMENT 'Usuario que registró el movimiento',
-    id_consulta BIGINT NULL COMMENT 'Consulta relacionada, si el movimiento es una salida por atención',
-    id_receta BIGINT NULL COMMENT 'Receta relacionada, si el movimiento es una salida por medicamento recetado',
-    tipo_movimiento ENUM('ENTRADA', 'SALIDA', 'AJUSTE') NOT NULL COMMENT 'Tipo de movimiento de inventario',
-    cantidad INT NOT NULL COMMENT 'Cantidad del movimiento. Debe ser mayor a cero',
-    motivo VARCHAR(255) NULL COMMENT 'Motivo o descripción del movimiento',
-    fecha_movimiento TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora del movimiento',
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id_medicamento BIGINT NOT NULL,
+    id_consulta BIGINT NULL,
+    id_receta BIGINT NULL,
+    tipo_movimiento ENUM('ENTRADA', 'SALIDA', 'AJUSTE') NOT NULL,
+    cantidad INT NOT NULL,
+    motivo VARCHAR(255),
+    fecha_movimiento TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     KEY idx_inv_mov_medicamento (id_medicamento),
-    KEY idx_inv_mov_usuario (id_usuario),
     KEY idx_inv_mov_consulta (id_consulta),
     KEY idx_inv_mov_receta (id_receta),
     KEY idx_inv_mov_fecha (fecha_movimiento),
 
     CONSTRAINT fk_inv_mov_medicamento
-        FOREIGN KEY (id_medicamento) REFERENCES medicamento(id)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT,
-
-    CONSTRAINT fk_inv_mov_usuario
-        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
+        FOREIGN KEY (id_medicamento) REFERENCES medicamento(id),
 
     CONSTRAINT fk_inv_mov_consulta
-        FOREIGN KEY (id_consulta) REFERENCES consulta(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
+        FOREIGN KEY (id_consulta) REFERENCES consulta(id),
 
     CONSTRAINT fk_inv_mov_receta
-        FOREIGN KEY (id_receta) REFERENCES receta(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
+        FOREIGN KEY (id_receta) REFERENCES receta(id),
 
     CONSTRAINT chk_inv_mov_cantidad
         CHECK (cantidad > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 COMMENT='Historial de entradas, salidas y ajustes del inventario de medicamentos';
-
-/*
-================================================================================
- 12. TABLA: auditoria_log
- --------------------------------------------------------------------------------
- Registra acciones importantes del sistema.
- Permite saber quién creó, modificó o eliminó registros.
-
- Ejemplos de uso:
-   - Usuario creó un paciente
-   - Usuario modificó una consulta
-   - Usuario anuló una receta
-   - Usuario inició sesión
-================================================================================
-*/
-CREATE TABLE IF NOT EXISTS auditoria_log (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT 'Identificador único del evento de auditoría',
-    id_usuario BIGINT NULL COMMENT 'Usuario que realizó la acción',
-    tabla_afectada VARCHAR(100) NULL COMMENT 'Nombre de la tabla afectada',
-    id_registro BIGINT NULL COMMENT 'ID del registro afectado',
-    accion ENUM('INSERT', 'UPDATE', 'DELETE', 'LOGIN') NOT NULL COMMENT 'Tipo de acción realizada',
-    descripcion TEXT NULL COMMENT 'Descripción detallada de la acción realizada',
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Fecha y hora del evento de auditoría',
-
-    KEY idx_auditoria_usuario (id_usuario),
-    KEY idx_auditoria_tabla (tabla_afectada),
-    KEY idx_auditoria_fecha (fecha),
-
-    CONSTRAINT fk_auditoria_usuario
-        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-COMMENT='Registro de auditoría de acciones importantes del sistema';
-
 /*
 ================================================================================
  13. DATOS INICIALES
@@ -498,9 +398,6 @@ COMMENT='Registro de auditoría de acciones importantes del sistema';
  INSERT IGNORE evita duplicados si el archivo se ejecuta más de una vez.
 ================================================================================
 */
-INSERT IGNORE INTO rol (nombre, descripcion) VALUES
-('ADMIN', 'Administrador del sistema'),
-('DOCTOR', 'Médico encargado de registrar pacientes, consultas y recetas');
 
 INSERT IGNORE INTO antecedente_catalogo (nombre) VALUES
 ('Hipertensión'),

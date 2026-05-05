@@ -50,7 +50,7 @@ export const getRecetasByPaciente = async (idPaciente) => {
   };
 };
 
-export const createReceta = async (data, idUsuario = null) => {
+export const createReceta = async (data) => {
   const {
     id_consulta,
     id_medicamento,
@@ -106,7 +106,7 @@ export const createReceta = async (data, idUsuario = null) => {
     throw error;
   }
 
-  const nuevaReceta = await recetasRepository.create(data, idUsuario);
+  const nuevaReceta = await recetasRepository.create(data);
 
   return await getRecetaById(nuevaReceta.id);
 };

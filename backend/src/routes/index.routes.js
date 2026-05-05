@@ -6,21 +6,16 @@ import consultasRoutes from "../modules/consultas/consultas.routes.js";
 import recetasRoutes from "../modules/recetas/recetas.routes.js";
 import medicamentosRoutes from "../modules/medicamentos/medicamentos.routes.js";
 import inventarioRoutes from "../modules/inventario/inventario.routes.js";
-import authRoutes from "../modules/auth/auth.routes.js";
 import cie10Routes from "../modules/cie10/cie10.routes.js";
-
-import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.use("/auth", authRoutes);
-
-router.use("/pacientes", authMiddleware, pacientesRoutes);
-router.use("/antecedentes", authMiddleware, antecedentesRoutes);
-router.use("/consultas", authMiddleware, consultasRoutes);
-router.use("/recetas", authMiddleware, recetasRoutes);
-router.use("/medicamentos", authMiddleware, medicamentosRoutes);
-router.use("/inventario", authMiddleware, inventarioRoutes);
-router.use("/cie10", authMiddleware, cie10Routes);
+router.use("/pacientes", pacientesRoutes);
+router.use("/antecedentes", antecedentesRoutes);
+router.use("/consultas", consultasRoutes);
+router.use("/recetas", recetasRoutes);
+router.use("/medicamentos", medicamentosRoutes);
+router.use("/inventario", inventarioRoutes);
+router.use("/cie10", cie10Routes);
 
 export default router;

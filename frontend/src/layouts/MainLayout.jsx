@@ -1,5 +1,4 @@
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
 
 const menuPrincipal = [
   {
@@ -60,19 +59,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-
   const pageTitle = getPageTitle(location.pathname);
-
-  const handleLogout = () => {
-    const confirmar = window.confirm("¿Deseas cerrar sesión?");
-
-    if (!confirmar) return;
-
-    logout();
-    navigate("/login");
-  };
 
   return (
     <div className="app-shell">
@@ -101,17 +88,13 @@ export default function MainLayout() {
 
         <div className="sidebar-footer">
           <div className="user-box">
-            <div className="user-avatar">
-              {user?.nombres?.charAt(0)?.toUpperCase() || "U"}
-            </div>
+            <div className="user-avatar">S</div>
 
             <div>
-              <strong>{user?.nombres || "Usuario"}</strong>
-              <span>{user?.rol || "Sistema"}</span>
+              <strong>Modo local</strong>
+              <span>Base de datos independiente</span>
             </div>
           </div>
-
-          <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
       </aside>
 

@@ -294,7 +294,6 @@ export const create = async (data, idUsuario = null) => {
         `
         INSERT INTO inventario_movimiento (
           id_medicamento,
-          id_usuario,
           id_consulta,
           id_receta,
           tipo_movimiento,
@@ -304,7 +303,6 @@ export const create = async (data, idUsuario = null) => {
         `,
         [
           id_medicamento,
-          idUsuario,
           id_consulta,
           idReceta,
           cantidadEntregadaNumerica,

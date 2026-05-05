@@ -52,8 +52,6 @@ export const findAllMovimientos = async () => {
       im.id_medicamento,
       m.nombre AS medicamento,
       m.cantidad AS medicamento_cantidad,
-      im.id_usuario,
-      u.usuario AS usuario,
       im.id_consulta,
       im.id_receta,
       im.tipo_movimiento,
@@ -63,8 +61,6 @@ export const findAllMovimientos = async () => {
     FROM inventario_movimiento im
     INNER JOIN medicamento m
       ON m.id = im.id_medicamento
-    LEFT JOIN usuario u
-      ON u.id = im.id_usuario
     ORDER BY im.fecha_movimiento DESC, im.id DESC
   `);
 
@@ -79,8 +75,6 @@ export const findMovimientosByMedicamento = async (idMedicamento) => {
       im.id_medicamento,
       m.nombre AS medicamento,
       m.cantidad AS medicamento_cantidad,
-      im.id_usuario,
-      u.usuario AS usuario,
       im.id_consulta,
       im.id_receta,
       im.tipo_movimiento,
@@ -90,8 +84,6 @@ export const findMovimientosByMedicamento = async (idMedicamento) => {
     FROM inventario_movimiento im
     INNER JOIN medicamento m
       ON m.id = im.id_medicamento
-    LEFT JOIN usuario u
-      ON u.id = im.id_usuario
     WHERE im.id_medicamento = ?
     ORDER BY im.fecha_movimiento DESC, im.id DESC
     `,
@@ -105,7 +97,6 @@ export const registrarMovimientoEntrada = async ({
   idMedicamento,
   cantidad,
   motivo,
-  idUsuario,
 }) => {
   const connection = await pool.getConnection();
 
@@ -127,13 +118,12 @@ export const registrarMovimientoEntrada = async ({
       `
       INSERT INTO inventario_movimiento (
         id_medicamento,
-        id_usuario,
         tipo_movimiento,
         cantidad,
         motivo
-      ) VALUES (?, ?, 'ENTRADA', ?, ?)
+      ) VALUES (?, 'ENTRADA', ?, ?)
       `,
-      [idMedicamento, idUsuario, cantidad, motivo]
+      [idMedicamento, cantidad, motivo]
     );
 
     await connection.commit();
@@ -151,7 +141,6 @@ export const registrarMovimientoSalida = async ({
   idMedicamento,
   cantidad,
   motivo,
-  idUsuario,
   idConsulta,
   idReceta,
 }) => {
@@ -202,17 +191,15 @@ export const registrarMovimientoSalida = async ({
       `
       INSERT INTO inventario_movimiento (
         id_medicamento,
-        id_usuario,
         id_consulta,
         id_receta,
         tipo_movimiento,
         cantidad,
         motivo
-      ) VALUES (?, ?, ?, ?, 'SALIDA', ?, ?)
+      ) VALUES (?, ?, ?, 'SALIDA', ?, ?)
       `,
       [
         idMedicamento,
-        idUsuario,
         idConsulta,
         idReceta,
         cantidad,
@@ -250,7 +237,6 @@ export const registrarMovimientoAjuste = async ({
   nuevoStock,
   diferencia,
   motivo,
-  idUsuario,
 }) => {
   const connection = await pool.getConnection();
 
@@ -272,15 +258,13 @@ export const registrarMovimientoAjuste = async ({
       `
       INSERT INTO inventario_movimiento (
         id_medicamento,
-        id_usuario,
         tipo_movimiento,
         cantidad,
         motivo
-      ) VALUES (?, ?, 'AJUSTE', ?, ?)
+      ) VALUES (?, 'AJUSTE', ?, ?)
       `,
       [
         idMedicamento,
-        idUsuario,
         Math.abs(diferencia),
         `${motivo}. Stock anterior: ${stockAnterior}. Nuevo stock: ${nuevoStock}. Diferencia: ${diferencia}`,
       ]

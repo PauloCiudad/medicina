@@ -65,10 +65,7 @@ export const getRecetasByPaciente = async (req, res, next) => {
 
 export const createReceta = async (req, res, next) => {
   try {
-    const nuevaReceta = await recetasService.createReceta(
-      req.body,
-      req.user?.id || null
-    );
+    const nuevaReceta = await recetasService.createReceta(req.body);
 
     return successResponse(
       res,

@@ -44,7 +44,6 @@ export const registrarEntrada = async (data) => {
     id_medicamento,
     cantidad,
     motivo = "Entrada manual de inventario",
-    id_usuario = null,
   } = data;
 
   if (!id_medicamento) {
@@ -55,7 +54,9 @@ export const registrarEntrada = async (data) => {
 
   const cantidadNumerica = validarCantidadPositiva(cantidad);
 
-  const medicamento = await inventarioRepository.findMedicamentoById(id_medicamento);
+  const medicamento = await inventarioRepository.findMedicamentoById(
+    id_medicamento
+  );
 
   if (!medicamento) {
     const error = new Error("Medicamento no encontrado");
@@ -67,7 +68,6 @@ export const registrarEntrada = async (data) => {
     idMedicamento: id_medicamento,
     cantidad: cantidadNumerica,
     motivo,
-    idUsuario: id_usuario,
   });
 
   return await inventarioRepository.findMedicamentoById(id_medicamento);
