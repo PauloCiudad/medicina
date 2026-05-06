@@ -1,0 +1,32 @@
+{
+  "appId": "pe.serums.desktop",
+  "productName": "Sistema Médico",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "backend/**/*",
+    "package.json",
+    "node_modules/**/*"
+  ],
+  "asar": true,
+  "asarUnpack": [
+    "node_modules/better-sqlite3/**/*"
+  ],
+  "win": {
+    "target": [
+      "nsis"
+    ],
+    "artifactName": "Sistema Médico-Setup-${version}.${ext}"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Sistema Médico"
+  }
+}

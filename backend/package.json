@@ -5,15 +5,15 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "build:base-db": "node scripts/build-base-db.cjs"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
-    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.5"
   },
   "devDependencies": {
