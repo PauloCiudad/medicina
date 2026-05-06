@@ -1,6 +1,6 @@
 {
   "name": "frontend-serums",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Frontend escritorio sistema SERUMS",
   "main": "electron/main.cjs",
   "type": "module",

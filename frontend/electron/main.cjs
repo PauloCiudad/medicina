@@ -8,12 +8,12 @@ let backendServer;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: 3000,
+    height: 2000,
     minWidth: 1100,
     minHeight: 700,
     show: false,
-    title: "Sistema Médico SERUMS",
+    title: "Sistema Médico",
     webPreferences: {
       preload: path.join(__dirname, "preload.cjs"),
       contextIsolation: true,
@@ -39,7 +39,7 @@ app.whenReady().then(async () => {
     createWindow();
   } catch (error) {
     dialog.showErrorBox(
-      "Error iniciando SERUMS",
+      "Error iniciando Sistema Médico",
       `No se pudo iniciar el backend local.\n\n${error.message}`
     );
 

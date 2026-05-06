@@ -2,7 +2,7 @@ directories:
   output: release
   buildResources: build
 appId: pe.serums.desktop
-productName: Sistema Médico SERUMS
+productName: Sistema Médico
 files:
   - filter:
       - dist/**/*
@@ -16,12 +16,12 @@ asarUnpack:
 win:
   target:
     - nsis
-  artifactName: SERUMS-Setup-${version}.${ext}
+  artifactName: Sistema Médico-Setup-${version}.${ext}
 nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: Sistema Médico SERUMS
+  shortcutName: Sistema Médico
 electronVersion: 35.7.5

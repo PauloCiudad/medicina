@@ -1,6 +1,6 @@
 {
   "appId": "pe.serums.desktop",
-  "productName": "Sistema Médico SERUMS",
+  "productName": "Sistema Médico",
   "directories": {
     "output": "release"
   },
@@ -19,7 +19,7 @@
     "target": [
       "nsis"
     ],
-    "artifactName": "SERUMS-Setup-${version}.${ext}"
+    "artifactName": "Sistema Médico-Setup-${version}.${ext}"
   },
   "nsis": {
     "oneClick": false,
@@ -27,6 +27,6 @@
     "allowToChangeInstallationDirectory": true,
     "createDesktopShortcut": true,
     "createStartMenuShortcut": true,
-    "shortcutName": "Sistema Médico SERUMS"
+    "shortcutName": "Sistema Médico"
   }
 }
